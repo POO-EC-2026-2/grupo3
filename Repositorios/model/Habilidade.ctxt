@@ -1,0 +1,37 @@
+#BlueJ class context
+#Thu Nov 19 14:46:08 BRT 2026
+comment0.target=Habilidade
+comment1.target=Habilidade()
+comment10.params=posion
+comment10.target=void setPosion(boolean)
+comment11.target=boolean isLifesteal()
+comment12.params=lifesteal
+comment12.target=void setLifesteal(boolean)
+comment13.target=boolean isStmSteal()
+comment14.params=stmSteal
+comment14.target=void setStmSteal(boolean)
+comment15.target=java.lang.String getTipo()
+comment16.params=tipo
+comment16.target=void setTipo(java.lang.String)
+comment17.target=java.lang.String getNomeSkill()
+comment18.params=nomeSkill
+comment18.target=void setNomeSkill(java.lang.String)
+comment19.target=int getCusto()
+comment2.params=dano stun burn posion lifesteal stmSteal tipo nomeSkill custo
+comment2.target=Habilidade(int, boolean, boolean, boolean, boolean, boolean, java.lang.String, java.lang.String, int)
+comment20.params=custo
+comment20.target=void setCusto(int)
+comment21.target=int getIdSkill()
+comment22.params=idSkill
+comment22.target=void setIdSkill(int)
+comment3.target=int getDano()
+comment4.params=dano
+comment4.target=void setDano(int)
+comment5.target=boolean isStun()
+comment6.params=stun
+comment6.target=void setStun(boolean)
+comment7.target=boolean isBurn()
+comment8.params=burn
+comment8.target=void setBurn(boolean)
+comment9.target=boolean isPosion()
+numComments=23

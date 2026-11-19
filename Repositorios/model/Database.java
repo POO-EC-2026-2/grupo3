@@ -1,4 +1,8 @@
+
+package model;
+
 import java.sql.SQLException;
+import java.io.File;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 
 public class Database {
@@ -17,8 +21,12 @@ public class Database {
         }
 
         if (connection == null) {
+            File arquivo = new File(databaseName);
+
+            System.out.println("Caminho do banco: " + arquivo.getAbsolutePath());
+
             connection = new JdbcConnectionSource(
-                "jdbc:sqlite:" + databaseName
+                "jdbc:sqlite:" + arquivo.getAbsolutePath()
             );
 
             System.out.println("Opened database successfully");

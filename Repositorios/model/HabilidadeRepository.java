@@ -1,4 +1,6 @@
 
+package model;
+
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
@@ -9,21 +11,17 @@ import java.util.ArrayList;
 
 public class HabilidadeRepository {
 
-    private static Database database;
-    private static Dao<Habilidade, Integer> dao;
+    private Database database;
+    private Dao<Habilidade, Integer> dao;
 
     private List<Habilidade> loadedHabilidades;
     private Habilidade loadedHabilidade;
 
     public HabilidadeRepository(Database database) {
-        HabilidadeRepository.setDatabase(database);
+        this.database = database;
 
         this.loadedHabilidades = new ArrayList<>();
         this.loadedHabilidade = null;
-    }
-
-    public static void setDatabase(Database database) {
-        HabilidadeRepository.database = database;
 
         try {
             dao = DaoManager.createDao(
@@ -37,7 +35,8 @@ public class HabilidadeRepository {
             );
 
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Erro ao iniciar HabilidadeRepository:");
+            e.printStackTrace();
         }
     }
 
@@ -46,14 +45,14 @@ public class HabilidadeRepository {
             int nrows = dao.create(habilidade);
 
             if (nrows == 0) {
-                throw new SQLException("Error: object not saved");
+                throw new SQLException("Objeto não foi salvo!");
             }
 
             this.loadedHabilidade = habilidade;
             this.loadedHabilidades.add(habilidade);
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return habilidade;
@@ -63,7 +62,7 @@ public class HabilidadeRepository {
         try {
             dao.update(habilidade);
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -78,7 +77,7 @@ public class HabilidadeRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -93,7 +92,7 @@ public class HabilidadeRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return this.loadedHabilidade;
@@ -110,7 +109,7 @@ public class HabilidadeRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return this.loadedHabilidades;
@@ -123,5 +122,4 @@ public class HabilidadeRepository {
     public Habilidade getLoadedHabilidade() {
         return loadedHabilidade;
     }
-    
 }

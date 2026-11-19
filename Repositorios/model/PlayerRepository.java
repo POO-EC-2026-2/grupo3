@@ -1,28 +1,27 @@
 
+package model;
+
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.Dao;
-import java.sql.SQLException;
 import com.j256.ormlite.table.TableUtils;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 
 public class PlayerRepository {
 
-    private static Database database;
-    private static Dao<Player, Integer> dao;
+    private Database database;
+    private Dao<Player, Integer> dao;
 
     private List<Player> loadedPlayers;
     private Player loadedPlayer;
 
     public PlayerRepository(Database database) {
-        PlayerRepository.setDatabase(database);
+        this.database = database;
 
         this.loadedPlayers = new ArrayList<>();
         this.loadedPlayer = null;
-    }
-
-    public static void setDatabase(Database database) {
-        PlayerRepository.database = database;
 
         try {
             dao = DaoManager.createDao(
@@ -36,7 +35,7 @@ public class PlayerRepository {
             );
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -45,14 +44,14 @@ public class PlayerRepository {
             int nrows = dao.create(player);
 
             if (nrows == 0) {
-                throw new SQLException("Error: object not saved");
+                throw new SQLException("Objeto não foi salvo!");
             }
 
             this.loadedPlayer = player;
             this.loadedPlayers.add(player);
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return player;
@@ -62,14 +61,13 @@ public class PlayerRepository {
         try {
             dao.update(player);
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
     public void delete(Player player) {
         try {
             dao.delete(player);
-
             this.loadedPlayers.remove(player);
 
             if (this.loadedPlayer == player) {
@@ -77,7 +75,7 @@ public class PlayerRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -92,7 +90,7 @@ public class PlayerRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return this.loadedPlayer;
@@ -109,7 +107,7 @@ public class PlayerRepository {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return this.loadedPlayers;
