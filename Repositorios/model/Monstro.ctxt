@@ -1,12 +1,15 @@
 #BlueJ class context
-#Sat Nov 21 14:09:13 BRT 2026
+#Sat Nov 21 15:33:10 BRT 2026
 comment0.target=Monstro
 comment1.target=Monstro()
-comment2.params=fraqueza
-comment2.target=Monstro(java.lang.String)
-comment3.target=java.lang.String getFraqueza()
-comment4.params=fraqueza
-comment4.target=void setFraqueza(java.lang.String)
-comment5.params=player
-comment5.target=int atacar(Player)
-numComments=6
+comment2.params=nomeMonstro fraqueza hpMax agility str stmMax ataque1 ataque2 ataque3 ataque4
+comment2.target=Monstro(java.lang.String, java.lang.String, int, int, int, int, int, int, int, int)
+comment3.target=java.lang.String getNomeMonstro()
+comment4.params=nomeMonstro
+comment4.target=void setNomeMonstro(java.lang.String)
+comment5.target=java.lang.String getFraqueza()
+comment6.params=fraqueza
+comment6.target=void setFraqueza(java.lang.String)
+comment7.params=player
+comment7.target=int atacar(Player)
+numComments=8

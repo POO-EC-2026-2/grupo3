@@ -10,19 +10,61 @@ import com.j256.ormlite.field.DatabaseField;
 public class Monstro extends Entidade {
 
     @DatabaseField
+    protected String nomeMonstro;
+
+    @DatabaseField
     protected String fraqueza = "Impacto";
 
     public Monstro() {
         super();
     }
 
-    public Monstro(String fraqueza) {
+    public Monstro(
+        String nomeMonstro,
+        String fraqueza,
+        int hpMax,
+        int agility,
+        int str,
+        int stmMax,
+        int ataque1,
+        int ataque2,
+        int ataque3,
+        int ataque4
+    ) {
         super();
+
+        this.nomeMonstro = nomeMonstro;
         this.fraqueza = fraqueza;
+
+        this.hpMax = hpMax;
+        this.hp = hpMax;
+
+        this.agility = agility;
+        this.str = str;
+
+        this.stmMax = stmMax;
+        this.stm = stmMax;
+
+        this.ataque1 = ataque1;
+        this.ataque2 = ataque2;
+        this.ataque3 = ataque3;
+        this.ataque4 = ataque4;
+
+        this.turnosBurn = 0;
+        this.turnosPoison = 0;
+        this.turnosStun = 0;
+    }
+
+    public String getNomeMonstro() {
+        return nomeMonstro;
+    }
+
+    public void setNomeMonstro(String nomeMonstro) {
+        this.nomeMonstro = nomeMonstro;
     }
 
     public String getFraqueza() {
-        return this.fraqueza;
+        return fraqueza;
     }
 
     public void setFraqueza(String fraqueza) {
@@ -44,17 +86,35 @@ public class Monstro extends Entidade {
                 getAtaque4()
             };
 
-            int idHabilidade = ataques[random.nextInt(ataques.length)];
+            int quantidadeAtaques = 0;
 
-            if (idHabilidade <= 0) {
-                System.out.println("O monstro não possui uma habilidade nesse espaço!");
+            for (int ataque : ataques) {
+                if (ataque > 0) {
+                    quantidadeAtaques++;
+                }
+            }
+
+            if (quantidadeAtaques == 0) {
                 return 0;
             }
 
-            Habilidade habilidade = habilidadeRepo.loadFromId(idHabilidade);
+            int indiceAtaque = random.nextInt(quantidadeAtaques);
+            int idHabilidade = 0;
+
+            for (int ataque : ataques) {
+                if (ataque > 0) {
+                    if (indiceAtaque == 0) {
+                        idHabilidade = ataque;
+                        break;
+                    }
+                    indiceAtaque--;
+                }
+            }
+
+            Habilidade habilidade =
+                habilidadeRepo.loadFromId(idHabilidade);
 
             if (habilidade == null) {
-                System.out.println("Habilidade não encontrada!");
                 return 0;
             }
 
@@ -63,11 +123,8 @@ public class Monstro extends Entidade {
             int dado = random.nextInt(20) + 1;
 
             if (dado <= player.getAgility()) {
-                System.out.println("O jogador desviou do ataque!");
                 return 0;
             }
-
-            System.out.println("O ataque do monstro acertou!");
 
             player.setHp(player.getHp() - dano);
 
@@ -84,13 +141,13 @@ public class Monstro extends Entidade {
             }
 
             if (habilidade.isLifesteal()) {
-                setHp(getHp() + 2);
+                this.setHp(this.getHp() + 2);
             }
 
             if (habilidade.isStmSteal()) {
                 if (player.getStm() > 0) {
                     player.setStm(player.getStm() - 1);
-                    setStm(getStm() + 1);
+                    this.setStm(this.getStm() + 1);
                 }
             }
 

@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.field.DatabaseField;
 
 @DatabaseTable(tableName = "player")
-public class Player extends Entidade {
+public class Player extends Entidade implements Inventario {
 
     @DatabaseField
     private String name;
@@ -14,9 +14,20 @@ public class Player extends Entidade {
     @DatabaseField
     private int arma;
 
+    @DatabaseField
+    private int potionsHp;
+
+    @DatabaseField
+    private int potionsStm;
+
     public Player() {
         super();
-    }
+
+        setAtaque1(1);
+        setAtaque2(2);
+        setAtaque3(3);
+        setAtaque4(4);
+}
 
     public String getName() {
         return this.name;
@@ -26,7 +37,70 @@ public class Player extends Entidade {
         this.name = name;
     }
 
-    // 0 para espada, 1 para martelo de guerra
+    public int getPotionsHp() {
+        return potionsHp;
+    }
+
+    public void setPotionsHp(int potionsHp) {
+        this.potionsHp = Math.max(0, potionsHp);
+    }
+
+    public int getPotionsStm() {
+        return potionsStm;
+    }
+
+    public void setPotionsStm(int potionsStm) {
+        this.potionsStm = Math.max(0, potionsStm);
+    }
+
+    public void potionHp() {
+
+        if (potionsHp <= 0) {
+            System.out.println("Você não possui poções de HP!");
+            return;
+        }
+
+        if (getHp() >= getHpMax()) {
+            System.out.println("Seu HP já está cheio!");
+            return;
+        }
+
+        int hpAnterior = getHp();
+
+        setHp(getHp() + 5);
+
+        int recuperado = getHp() - hpAnterior;
+
+        potionsHp--;
+
+        System.out.println("Você recuperou " + recuperado + " HP!");
+        System.out.println("Poções de HP restantes: " + potionsHp);
+    }
+
+    public void potionStm() {
+
+        if (potionsStm <= 0) {
+            System.out.println("Você não possui poções de STM!");
+            return;
+        }
+
+        if (getStm() >= getStmMax()) {
+            System.out.println("Sua STM já está cheia!");
+            return;
+        }
+
+        int stmAnterior = getStm();
+
+        setStm(getStm() + 3);
+
+        int recuperado = getStm() - stmAnterior;
+
+        potionsStm--;
+
+        System.out.println("Você recuperou " + recuperado + " STM!");
+        System.out.println("Poções de STM restantes: " + potionsStm);
+    }
+
     public void trocarArma() {
         if (arma == 1) {
             this.arma = 0;
