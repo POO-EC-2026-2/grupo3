@@ -1,0 +1,85 @@
+package model;
+
+public class PlayerRepositoryTest {
+    public static void main(String[] args) {
+        Database database = new Database("player_repository_test.db");
+        PlayerRepository repository = new PlayerRepository(database);
+
+        testarCadastroEConsulta(repository);
+        testarAtualizacao(repository);
+        testarExclusaoComInstanciasDiferentes(repository);
+
+        database.close();
+
+        System.out.println("Todos os testes passaram!");
+    }
+
+    public static void testarCadastroEConsulta(PlayerRepository repository) {
+        Player player = new Player();
+        player.setName("Arthur");
+
+        Player cadastrado = repository.create(player);
+
+        verificar(cadastrado != null, "Cadastro do jogador");
+        verificar(cadastrado.getId() > 0, "Geração automática do ID");
+
+        Player encontrado = repository.loadFromId(cadastrado.getId());
+
+        verificar(encontrado != null, "Consulta por ID");
+        verificar(encontrado.getName().equals("Arthur"), "Nome do jogador");
+        verificar(encontrado.getHp() == 10, "HP inicial");
+        verificar(encontrado.getStm() == 10, "STM inicial");
+    }
+
+
+    public static void testarAtualizacao(PlayerRepository repository) {
+        Player player = new Player();
+        player.setName("Arthur");
+
+        repository.create(player);
+
+        player.setName("Arthos");
+        player.setHp(7);
+        player.setStm(5);
+
+        repository.update(player);
+
+        Player atualizado = repository.loadFromId(player.getId());
+
+        verificar(atualizado.getName().equals("Arthos"), "Atualização do nome");
+        verificar(atualizado.getHp() == 7, "Atualização do HP");
+        verificar(atualizado.getStm() == 5, "Atualização da STM");
+    }
+
+
+    
+    public static void testarExclusaoComInstanciasDiferentes(PlayerRepository repository) {
+        Player player = new Player();
+        player.setName("Guerreiro");
+
+        repository.create(player);
+
+        int id = player.getId();
+
+        Player carregado = repository.loadFromId(id);
+
+        verificar(carregado != null, "Consulta para teste de exclusão");
+        verificar(carregado != player, "Instâncias diferentes do mesmo jogador");
+
+        repository.delete(carregado);
+        System.out.println("Consulta após exclusão: " + repository.loadFromId(id));
+
+        //verificar(repository.getLoadedPlayers().stream().noneMatch(p -> p.getId() == id), "Remoção do jogador do cache por ID");
+
+        verificar(repository.loadFromId(id) == null, "Exclusão do jogador do banco");
+    }
+
+
+    public static void verificar(boolean resultado, String teste) {
+        if (!resultado) {
+            throw new AssertionError("Falha: " + teste);
+        }
+
+        System.out.println("Aprovado: " + teste);
+    }
+}
