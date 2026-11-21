@@ -8,6 +8,7 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class HabilidadeRepository {
 
@@ -67,13 +68,29 @@ public class HabilidadeRepository {
     }
 
     public void delete(Habilidade habilidade) {
+        if (habilidade == null) {
+            return;
+        }
+
         try {
-            dao.delete(habilidade);
+            int id = habilidade.getIdSkill();
 
-            this.loadedHabilidades.remove(habilidade);
+            dao.deleteById(id);
 
-            if (this.loadedHabilidade == habilidade) {
-                this.loadedHabilidade = null;
+            Iterator<Habilidade> iterator =
+                loadedHabilidades.iterator();
+
+            while (iterator.hasNext()) {
+                Habilidade atual = iterator.next();
+
+                if (atual.getIdSkill() == id) {
+                    iterator.remove();
+                }
+            }
+
+            if (loadedHabilidade != null &&
+                loadedHabilidade.getIdSkill() == id) {
+                loadedHabilidade = null;
             }
 
         } catch (SQLException e) {
