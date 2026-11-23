@@ -1,0 +1,88 @@
+package model;
+
+public class MonstroRepositoryTest {
+    public static void main(String[] args) {
+        Database database = new Database("monstro_repository_test.db");
+        MonstroRepository repository = new MonstroRepository(database);
+
+        testarCadastroEConsulta(repository);
+        testarAtualizacao(repository);
+        testarExclusaoComInstanciasDiferentes(repository);
+
+        database.close();
+
+        System.out.println("Todos os testes passaram!");
+    }
+
+    public static void testarCadastroEConsulta(MonstroRepository repository) {
+        Monstro monstro = new Monstro( "Goblin", "Fogo", 20, 5, 3, 10, 1, 2, 3, 4);
+
+        Monstro cadastrado = repository.create(monstro);
+
+        verificar(cadastrado != null, "Cadastro do monstro");
+        verificar(cadastrado.getId() > 0, "Geração automática do ID");
+
+        Monstro encontrado = repository.loadFromId(cadastrado.getId());
+
+        verificar(encontrado != null, "Consulta por ID");
+        verificar(encontrado.getNomeMonstro().equals("Goblin"), "Nome do monstro");
+        verificar(encontrado.getFraqueza().equals("Fogo"), "Fraqueza do monstro");
+        verificar(encontrado.getHp() == 20, "HP inicial");
+        verificar(encontrado.getAgility() == 5, "Agilidade inicial");
+    }
+
+
+    public static void testarAtualizacao(MonstroRepository repository) {
+        Monstro monstro = new Monstro( "Goblin", "Fogo", 20, 5, 3, 10, 1, 2, 3, 4);
+
+        repository.create(monstro);
+
+        monstro.setNomeMonstro("Goblin Guerreiro");
+        monstro.setFraqueza("Água");
+        monstro.setHp(15);
+        monstro.setAgility(8);
+
+        repository.update(monstro);
+
+        Monstro atualizado = repository.loadFromId(monstro.getId());
+
+        verificar(atualizado.getNomeMonstro().equals("Goblin Guerreiro"), "Atualização do nome");
+
+        verificar(atualizado.getFraqueza().equals("Água"), "Atualização da fraqueza");
+
+        verificar(atualizado.getHp() == 15, "Atualização do HP");
+        verificar(atualizado.getAgility() == 8, "Atualização da agilidade");
+    }
+
+
+    public static void testarExclusaoComInstanciasDiferentes(MonstroRepository repository) {
+        Monstro monstro = new Monstro( "Orc", "Fogo", 30, 4, 8, 10, 1, 2, 3, 4);
+
+        repository.create(monstro);
+
+        int id = monstro.getId();
+
+        Monstro carregado = repository.loadFromId(id);
+
+        verificar(carregado != null, "Consulta para teste de exclusão");
+        verificar(carregado != monstro, "Instâncias diferentes do mesmo monstro");
+
+        repository.delete(monstro);
+
+        System.out.println("Consulta após exclusão: " + repository.loadFromId(id));
+
+        //verificar(repository.getLoadedMonstros().stream().noneMatch(m -> m.getId() == id), "Remoção do monstro do cache por ID");
+
+        verificar(repository.loadFromId(id) == null, "Exclusão do monstro do banco");
+    }
+
+
+
+    public static void verificar(boolean resultado, String teste) {
+        if (!resultado) {
+            throw new AssertionError("Falha: " + teste);
+        }
+
+        System.out.println("Aprovado: " + teste);
+    }
+}
