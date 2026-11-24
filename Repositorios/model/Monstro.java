@@ -157,4 +157,5 @@ public class Monstro extends Entidade {
             database.close();
         }
     }
+    
 }

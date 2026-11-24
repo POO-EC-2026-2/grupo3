@@ -50,6 +50,8 @@ package model {
         + setTurnosStun(turnosStun : int) : void
         + processarEfeitosTurno() : int
         + estaAtordoado() : boolean
+        + equals(o: Object): boolean
+        + hashCode(): int
     }
 
     interface Inventario {

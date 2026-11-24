@@ -67,12 +67,12 @@ public class MonstroRepository {
 
     public void delete(Monstro monstro) {
         try {
-            dao.delete(monstro);
-            this.loadedMonstros.remove(monstro);
+        dao.delete(monstro);
+        this.loadedMonstros.removeIf(m -> m.getId() == monstro.getId());
 
-            if (this.loadedMonstro == monstro) {
-                this.loadedMonstro = null;
-            }
+        if (this.loadedMonstro != null && this.loadedMonstro.getId() == monstro.getId()) {
+            this.loadedMonstro = null;
+        }
 
         } catch (SQLException e) {
             e.printStackTrace();

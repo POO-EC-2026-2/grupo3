@@ -68,11 +68,11 @@ public class PlayerRepository {
     public void delete(Player player) {
         try {
             dao.delete(player);
-            this.loadedPlayers.remove(player);
+            this.loadedPlayers.removeIf(p -> p.getId() == player.getId());
 
-            if (this.loadedPlayer == player) {
-                this.loadedPlayer = null;
-            }
+        if (this.loadedPlayer != null && this.loadedPlayer.getId() == player.getId()) {
+            this.loadedPlayer = null;
+        }
 
         } catch (SQLException e) {
             e.printStackTrace();

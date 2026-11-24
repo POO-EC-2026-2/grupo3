@@ -200,4 +200,13 @@ public abstract class Entidade {
 
         return false;
     }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entidade other = (Entidade) o;
+        return this.getId() != 0 && this.getId() == other.getId();
+    }
+    public int hashCode() {
+        return Integer.hashCode(this.getId());
+    }
 }

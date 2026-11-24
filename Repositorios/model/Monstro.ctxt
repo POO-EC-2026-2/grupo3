@@ -1,5 +1,5 @@
 #BlueJ class context
-#Sat Nov 21 15:33:10 BRT 2026
+#Tue Nov 24 10:22:22 BRT 2026
 comment0.target=Monstro
 comment1.target=Monstro()
 comment2.params=nomeMonstro fraqueza hpMax agility str stmMax ataque1 ataque2 ataque3 ataque4
