@@ -8,6 +8,7 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MonstroRepository {
 
@@ -66,12 +67,27 @@ public class MonstroRepository {
     }
 
     public void delete(Monstro monstro) {
-        try {
-            dao.delete(monstro);
-            this.loadedMonstros.remove(monstro);
+        if (monstro == null) {
+            return;
+        }
 
-            if (this.loadedMonstro == monstro) {
-                this.loadedMonstro = null;
+        try {
+            int id = monstro.id;
+
+            dao.deleteById(id);
+
+            Iterator<Monstro> iterator = loadedMonstros.iterator();
+
+            while (iterator.hasNext()) {
+                Monstro atual = iterator.next();
+
+                if (atual.id == id) {
+                    iterator.remove();
+                }
+            }
+
+            if (loadedMonstro != null && loadedMonstro.id == id) {
+                loadedMonstro = null;
             }
 
         } catch (SQLException e) {

@@ -18,16 +18,13 @@ public abstract class Entidade {
     protected int turnosStun;
 
     @DatabaseField
-    protected int hp = 10;
+    protected int hp = 20;
 
     @DatabaseField
     protected int hpMax = 10;
 
     @DatabaseField
     protected int agility = 10;
-
-    @DatabaseField
-    protected int str;
 
     @DatabaseField
     protected int stm = 10;
@@ -84,14 +81,6 @@ public abstract class Entidade {
 
     public void setAgility(int agility) {
         this.agility = Math.max(0, agility);
-    }
-
-    public int getStr() {
-        return str;
-    }
-
-    public void setStr(int str) {
-        this.str = Math.max(0, str);
     }
 
     public int getStm() {

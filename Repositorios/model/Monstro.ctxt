@@ -1,9 +1,9 @@
 #BlueJ class context
-#Sat Nov 21 15:33:10 BRT 2026
+#Tue Nov 24 19:30:43 BRT 2026
 comment0.target=Monstro
 comment1.target=Monstro()
-comment2.params=nomeMonstro fraqueza hpMax agility str stmMax ataque1 ataque2 ataque3 ataque4
-comment2.target=Monstro(java.lang.String, java.lang.String, int, int, int, int, int, int, int, int)
+comment2.params=nomeMonstro fraqueza hpMax agility stmMax ataque1 ataque2 ataque3 ataque4
+comment2.target=Monstro(java.lang.String, java.lang.String, int, int, int, int, int, int, int)
 comment3.target=java.lang.String getNomeMonstro()
 comment4.params=nomeMonstro
 comment4.target=void setNomeMonstro(java.lang.String)

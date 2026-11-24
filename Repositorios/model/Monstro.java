@@ -24,7 +24,6 @@ public class Monstro extends Entidade {
         String fraqueza,
         int hpMax,
         int agility,
-        int str,
         int stmMax,
         int ataque1,
         int ataque2,
@@ -40,8 +39,6 @@ public class Monstro extends Entidade {
         this.hp = hpMax;
 
         this.agility = agility;
-        this.str = str;
-
         this.stmMax = stmMax;
         this.stm = stmMax;
 
