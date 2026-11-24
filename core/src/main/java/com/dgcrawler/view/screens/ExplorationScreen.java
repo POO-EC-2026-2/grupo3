@@ -17,7 +17,8 @@ import com.dgcrawler.view.render.MapRenderer;
 import com.dgcrawler.controller.ExplorationController;
 import com.dgcrawler.DGCrawlerGame;
 import com.dgcrawler.view.ui.PauseMenuOverlay;
-
+import com.dgcrawler.controller.MonstroController;
+import com.dgcrawler.view.render.MonstroRenderer;
 
 public class ExplorationScreen extends ScreenAdapter {
 
@@ -25,7 +26,8 @@ public class ExplorationScreen extends ScreenAdapter {
     private ExplorationController explorationController;
     private OrthographicCamera camera;
     private FitViewport viewport;
-
+    private MonstroController monstroController;
+    private MonstroRenderer monstroRenderer;
     private SpriteBatch batch;
     private PlayerRenderer playerRenderer;
 
@@ -34,6 +36,8 @@ public class ExplorationScreen extends ScreenAdapter {
 
     private float larguraMapa;
     private float alturaMapa;
+
+    // menu de pause
     private final DGCrawlerGame game;
 
     private PauseMenuOverlay pauseMenu;
@@ -46,6 +50,13 @@ public class ExplorationScreen extends ScreenAdapter {
     public void show() {
 
         mapRenderer = new MapRenderer();
+
+        monstroController = new MonstroController(
+            mapRenderer.getObjetosSpawn(),
+            game.getDatabaseManager().getMonstroRepository()
+        );
+
+        monstroRenderer = new MonstroRenderer();
 
         player = new PlayerModel();
 
@@ -149,13 +160,21 @@ public class ExplorationScreen extends ScreenAdapter {
             explorationController.isEstaAndando()
         );
 
+        monstroRenderer.update(delta);
+
         viewport.apply();
 
         mapRenderer.render(camera);
 
-            batch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(camera.combined);
 
-            playerRenderer.render(batch, player);
+        monstroRenderer.render(
+            batch,
+            monstroController.getInimigos(),
+            player
+        );
+
+        playerRenderer.render(batch, player);
 
         if (explorationController.getEstado()
             == com.dgcrawler.model.ExplorationState.PAUSADO) {
@@ -189,5 +208,10 @@ public class ExplorationScreen extends ScreenAdapter {
             if (pauseMenu != null) {
                 pauseMenu.dispose();
             }
+
+            if (monstroRenderer != null) {
+                monstroRenderer.dispose();
+            }
+
         }
 }

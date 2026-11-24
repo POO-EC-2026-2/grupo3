@@ -1,0 +1,138 @@
+
+package com.dgcrawler.backend.repository;
+
+import com.dgcrawler.backend.database.Database;
+import com.dgcrawler.backend.model.Habilidade;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.table.TableUtils;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class HabilidadeRepository {
+
+    private Database database;
+    private Dao<Habilidade, Integer> dao;
+
+    private List<Habilidade> loadedHabilidades;
+    private Habilidade loadedHabilidade;
+
+    public HabilidadeRepository(Database database) throws SQLException {
+        this.database = database;
+
+        this.loadedHabilidades = new ArrayList<>();
+        this.loadedHabilidade = null;
+
+        dao = DaoManager.createDao(
+            database.getConnection(),
+            Habilidade.class
+        );
+
+        TableUtils.createTableIfNotExists(
+            database.getConnection(),
+            Habilidade.class
+        );
+    }
+
+    public Habilidade create(Habilidade habilidade) {
+        try {
+            int nrows = dao.create(habilidade);
+
+            if (nrows == 0) {
+                throw new SQLException("Objeto não foi salvo!");
+            }
+
+            this.loadedHabilidade = habilidade;
+            this.loadedHabilidades.add(habilidade);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return habilidade;
+    }
+
+    public void update(Habilidade habilidade) {
+        try {
+            dao.update(habilidade);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(Habilidade habilidade) {
+        if (habilidade == null) {
+            return;
+        }
+
+        try {
+            int id = habilidade.getIdSkill();
+
+            dao.deleteById(id);
+
+            Iterator<Habilidade> iterator =
+                loadedHabilidades.iterator();
+
+            while (iterator.hasNext()) {
+                Habilidade atual = iterator.next();
+
+                if (atual.getIdSkill() == id) {
+                    iterator.remove();
+                }
+            }
+
+            if (loadedHabilidade != null &&
+                loadedHabilidade.getIdSkill() == id) {
+                loadedHabilidade = null;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Habilidade loadFromId(int id) {
+        try {
+            this.loadedHabilidade = dao.queryForId(id);
+
+            if (this.loadedHabilidade != null &&
+                !this.loadedHabilidades.contains(this.loadedHabilidade)) {
+
+                this.loadedHabilidades.add(this.loadedHabilidade);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return this.loadedHabilidade;
+    }
+
+    public List<Habilidade> loadAll() {
+        try {
+            this.loadedHabilidades = dao.queryForAll();
+
+            if (!this.loadedHabilidades.isEmpty()) {
+                this.loadedHabilidade = this.loadedHabilidades.get(0);
+            } else {
+                this.loadedHabilidade = null;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return this.loadedHabilidades;
+    }
+
+    public List<Habilidade> getLoadedHabilidades() {
+        return loadedHabilidades;
+    }
+
+    public Habilidade getLoadedHabilidade() {
+        return loadedHabilidade;
+    }
+}
