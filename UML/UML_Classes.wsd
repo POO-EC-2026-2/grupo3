@@ -1,0 +1,206 @@
+@startuml
+title Diagrama de Classes - RPG
+
+left to right direction
+
+package model {
+    abstract class Entidade {
+        # id : int
+        # turnosBurn : int
+        # turnosPoison : int
+        # turnosStun : int
+        # hp : int = 10
+        # hpMax : int = 10
+        # agility : int = 10
+        # str : int
+        # stm : int = 10
+        # stmMax : int = 10
+        # ataque1 : int
+        # ataque2 : int
+        # ataque3 : int
+        # ataque4 : int
+        + Entidade()
+        + getId() : int
+        + setId(id : int) : void
+        + getHp() : int
+        + setHp(hp : int) : void
+        + getHpMax() : int
+        + setHpMax(hpMax : int) : void
+        + getAgility() : int
+        + setAgility(agility : int) : void
+        + getStr() : int
+        + setStr(str : int) : void
+        + getStm() : int
+        + setStm(stm : int) : void
+        + getStmMax() : int
+        + setStmMax(stmMax : int) : void
+        + getAtaque1() : int
+        + setAtaque1(ataque1 : int) : void
+        + getAtaque2() : int
+        + setAtaque2(ataque2 : int) : void
+        + getAtaque3() : int
+        + setAtaque3(ataque3 : int) : void
+        + getAtaque4() : int
+        + setAtaque4(ataque4 : int) : void
+        + getTurnosBurn() : int
+        + setTurnosBurn(turnosBurn : int) : void
+        + getTurnosPoison() : int
+        + setTurnosPoison(turnosPoison : int) : void
+        + getTurnosStun() : int
+        + setTurnosStun(turnosStun : int) : void
+        + processarEfeitosTurno() : int
+        + estaAtordoado() : boolean
+    }
+
+    interface Inventario {
+        + potionHp() : void
+        + potionStm() : void
+        + trocarArma() : void
+    }
+
+    class Player {
+        - name : String
+        - arma : int
+        - potionsHp : int
+        - potionsStm : int
+        + Player()
+        + getName() : String
+        + setName(name : String) : void
+        + getPotionsHp() : int
+        + setPotionsHp(potionsHp : int) : void
+        + getPotionsStm() : int
+        + setPotionsStm(potionsStm : int) : void
+        + potionHp() : void
+        + potionStm() : void
+        + trocarArma() : void
+        + atacar(id : int, monstro : Monstro) : int
+    }
+
+    class Monstro {
+        # nomeMonstro : String
+        # fraqueza : String = "Impacto"
+        + Monstro()
+        + Monstro(nomeMonstro : String, fraqueza : String, hpMax : int, agility : int, str : int, stmMax : int, ataque1 : int, ataque2 : int, ataque3 : int, ataque4 : int)
+        + getNomeMonstro() : String
+        + setNomeMonstro(nomeMonstro : String) : void
+        + getFraqueza() : String
+        + setFraqueza(fraqueza : String) : void
+        + atacar(player : Player) : int
+    }
+
+    class Habilidade {
+        class Habilidade {
+        # dano : int
+        # stun : boolean
+        # burn : boolean
+        # posion : boolean
+        # lifesteal : boolean
+        # stmSteal : boolean
+        # tipo : String
+        # nomeSkill : String
+        # custo : int
+        # idSkill : int
+        + Habilidade()
+        + Habilidade(dano : int, stun : boolean, burn : boolean, posion : boolean, lifesteal : boolean, stmSteal : boolean, tipo : String, nomeSkill : String, custo : int)
+        + getDano() : int
+        + setDano(dano : int) : void
+        + isStun() : boolean
+        + setStun(stun : boolean) : void
+        + isBurn() : boolean
+        + setBurn(burn : boolean) : void
+        + isPosion() : boolean
+        + setPosion(posion : boolean) : void
+        + isLifesteal() : boolean
+        + setLifesteal(lifesteal : boolean) : void
+        + isStmSteal() : boolean
+        + setStmSteal(stmSteal : boolean) : void
+        + getTipo() : String
+        + setTipo(tipo : String) : void
+        + getNomeSkill() : String
+        + setNomeSkill(nomeSkill : String) : void
+        + getCusto() : int
+        + setCusto(custo : int) : void
+        + getIdSkill() : int
+        + setIdSkill(idSkill : int) : void
+    }q
+    }
+
+    class Database {
+        - databaseName : String
+        - connection : JdbcConnectionSource
+        + Database(databaseName : String)
+        + getConnection() : JdbcConnectionSource
+        + close() : void
+    }
+
+    class PlayerRepository {
+        - {static} database : Database
+        - {static} dao : Dao<Player, Integer>
+        - loadedPlayers : List<Player>
+        - loadedPlayer : Player
+        + PlayerRepository(database : Database)
+        + {static} setDatabase(database : Database) : void
+        + create(player : Player) : Player
+        + update(player : Player) : void
+        + delete(player : Player) : void
+        + loadFromId(id : int) : Player
+        + loadAll() : List<Player>
+        + getLoadedPlayers() : List<Player>
+        + getLoadedPlayer() : Player
+    }
+
+    class MonstroRepository {
+        - {static} database : Database
+        - {static} dao : Dao<Monstro, Integer>
+        - loadedMonstros : List<Monstro>
+        - loadedMonstro : Monstro
+        + MonstroRepository(database : Database)
+        + {static} setDatabase(database : Database) : void
+        + create(monstro : Monstro) : Monstro
+        + update(monstro : Monstro) : void
+        + delete(monstro : Monstro) : void
+        + loadFromId(id : int) : Monstro
+        + loadAll() : List<Monstro>
+        + getLoadedMonstros() : List<Monstro>
+        + getLoadedMonstro() : Monstro
+    }
+
+    class HabilidadeRepository {
+        - {static} database : Database
+        - {static} dao : Dao<Habilidade, Integer>
+        - loadedHabilidades : List<Habilidade>
+        - loadedHabilidade : Habilidade
+        + HabilidadeRepository(database : Database)
+        + {static} setDatabase(database : Database) : void
+        + create(habilidade : Habilidade) : Habilidade
+        + update(habilidade : Habilidade) : void
+        + delete(habilidade : Habilidade) : void
+        + loadFromId(id : int) : Habilidade
+        + loadAll() : List<Habilidade>
+        + getLoadedHabilidades() : List<Habilidade>
+        + getLoadedHabilidade() : Habilidade
+    }
+
+    ' Relações Estruturais
+    Entidade <|-- Player
+    Entidade <|-- Monstro
+    Inventario <|.. Player
+
+    Player ..> Monstro : ataca
+    Player ..> Habilidade : usa
+    Player ..> Database : usa
+    Player ..> HabilidadeRepository : usa
+
+    Monstro ..> Player : ataca
+    Monstro ..> Habilidade : usa
+    Monstro ..> Database : usa
+    Monstro ..> HabilidadeRepository : usa
+
+    PlayerRepository --> Database
+    PlayerRepository --> Player
+    MonstroRepository --> Database
+    MonstroRepository --> Monstro
+    HabilidadeRepository --> Database
+    HabilidadeRepository --> Habilidade
+}
+@enduml

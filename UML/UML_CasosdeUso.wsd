@@ -1,0 +1,42 @@
+@startuml
+title Diagrama de Casos de Uso - RPG
+
+left to right direction
+
+
+actor "Jogador" as jogador
+
+
+actor "Banco de Dados" as db <<Sistema>>
+
+
+package "Sistema RPG" {
+    
+    
+    usecase "Gerenciar Personagem" as uc_player
+    usecase "Iniciar Batalha" as uc_batalha
+    usecase "Atacar Inimigo" as uc_atacar
+    usecase "Usar Habilidade" as uc_usar_hab
+    
+    
+    usecase "Salvar / Carregar Dados" as uc_crud
+}
+
+
+jogador --> uc_player
+jogador --> uc_batalha
+jogador --> uc_atacar
+
+
+uc_atacar ..> uc_usar_hab : <<include>>
+
+
+uc_batalha ..> uc_atacar : <<include>>
+
+
+uc_player ..> uc_crud : <<include>>
+uc_batalha ..> uc_crud : <<include>>
+
+uc_crud --> db
+
+@enduml

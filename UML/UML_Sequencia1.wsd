@@ -1,0 +1,76 @@
+@startuml
+title Diagrama de Sequência - Turno de Batalha
+
+actor Jogador as user
+participant "GameController" as controller
+participant "PlayerRepository" as pRepo
+participant "MonstroRepository" as mRepo
+participant "HabilidadeRepository" as hRepo
+participant "jogador: Player" as player
+participant "inimigo: Monstro" as monstro
+
+== Preparação da Batalha ==
+
+user -> controller : iniciarBatalha(playerId, monstroId)
+activate controller
+
+controller -> pRepo : loadFromId(playerId)
+activate pRepo
+pRepo --> controller : jogador
+deactivate pRepo
+
+controller -> mRepo : loadFromId(monstroId)
+activate mRepo
+mRepo --> controller : inimigo
+deactivate mRepo
+
+== Turno do Jogador ==
+
+user -> controller : usarHabilidade(id)
+controller -> player : atacar(id, inimigo)
+activate player
+
+player -> hRepo : loadFromId(id)
+activate hRepo
+hRepo --> player : habilidade
+deactivate hRepo
+
+note right of player
+  Consome STM, rola d20 contra
+  agility e verifica fraqueza
+end note
+
+player -> monstro : setHp(hp - danoFinal)
+activate monstro
+monstro --> player
+deactivate monstro
+
+player --> controller : danoFinal
+deactivate player
+
+controller --> user : exibirDano(danoFinal)
+
+== Turno do Monstro ==
+
+controller -> monstro : processarEfeitosTurno()
+activate monstro
+monstro --> controller : danoEfeitos
+
+controller -> monstro : atacar(jogador)
+
+monstro -> hRepo : loadFromId(idAtaque)
+activate hRepo
+hRepo --> monstro : habilidade
+deactivate hRepo
+
+monstro -> player : setHp(hp - dano)
+activate player
+player --> monstro
+deactivate player
+
+monstro --> controller : dano
+deactivate monstro
+
+controller --> user : exibirAtaqueInimigo(dano)
+deactivate controller
+@enduml
