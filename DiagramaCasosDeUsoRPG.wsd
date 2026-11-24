@@ -1,0 +1,53 @@
+@startuml
+title Diagrama de Casos de Uso - RPG
+
+left to right direction
+
+actor "Jogador" as jogador
+
+rectangle "Sistema RPG" {
+    
+    usecase "Movimentação" as uc_movi
+    usecase "Iniciar Batalha" as uc_batalha
+    usecase "Usar Habilidade" as uc_usarhab
+    usecase "Ataque Simples" as uc_atacarsimp
+    usecase "Inventário" as uc_inventario
+    usecase "Poção HP" as uc_pocaohp
+    usecase "Poção Estamina" as uc_pocaostm
+    usecase "Trocar Arma" as uc_trocar
+    usecase "Habilidade 1" as uc_habilidade1
+    usecase "Habilidade 2" as uc_habilidade2
+    usecase "Habilidade 3" as uc_habilidade3
+    usecase "Habilidade 4" as uc_habilidade4
+
+    usecase "Salvar Dados" as uc_salvar
+}
+
+
+
+jogador --> uc_batalha
+jogador --> uc_movi
+
+
+uc_batalha ..> uc_atacarsimp
+uc_batalha ..> uc_usarhab
+uc_batalha ..> uc_inventario
+
+uc_inventario ..> uc_pocaohp
+uc_inventario ..> uc_pocaostm
+uc_inventario ..> uc_trocar
+
+uc_usarhab ..> uc_habilidade1
+uc_usarhab ..> uc_habilidade2
+uc_usarhab ..> uc_habilidade3
+uc_usarhab ..> uc_habilidade4
+
+uc_pocaohp ..> uc_salvar
+uc_pocaostm ..> uc_salvar
+uc_trocar ..> uc_salvar
+uc_habilidade1 ..> uc_salvar
+uc_habilidade2 ..> uc_salvar
+uc_habilidade3 ..> uc_salvar
+uc_habilidade4 ..> uc_salvar
+
+@enduml
