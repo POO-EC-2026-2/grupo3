@@ -1,0 +1,176 @@
+package model;
+
+public class MonstroRepositoryTest {
+    public static void main(String[] args) {
+        Database database = new Database("monstro_repository_test.db");
+        MonstroRepository repository = new MonstroRepository(database);
+
+        testarCadastroEConsulta(repository);
+        testarAtualizacao(repository);
+        testarExclusaoComInstanciasDiferentes(repository);
+        testarListagem(repository);
+        testarConsultaIdInexistente(repository);
+        testarAtualizacaoDoMonstroAtual(repository);
+        testarAtualizacaoNoCache(repository);
+        testarAtualizacaoComInstanciasDiferentes(repository);
+
+        database.close();
+
+        System.out.println("Todos os testes passaram!");
+    }
+
+    public static void testarCadastroEConsulta(MonstroRepository repository) {
+        Monstro monstro = new Monstro( "Goblin", "Fogo", 20, 5, 3, 10, 1, 2, 3, 4);
+
+        Monstro cadastrado = repository.create(monstro);
+
+        verificar(cadastrado != null, "Cadastro do monstro");
+        verificar(cadastrado.getId() > 0, "Geração automática do ID");
+
+        Monstro encontrado = repository.loadFromId(cadastrado.getId());
+
+        verificar(encontrado != null, "Consulta por ID");
+        verificar(encontrado.getNomeMonstro().equals("Goblin"), "Nome do monstro");
+        verificar(encontrado.getFraqueza().equals("Fogo"), "Fraqueza do monstro");
+        verificar(encontrado.getHp() == 20, "HP inicial");
+        verificar(encontrado.getAgility() == 5, "Agilidade inicial");
+    }
+
+
+    public static void testarAtualizacao(MonstroRepository repository) {
+        Monstro monstro = new Monstro( "Goblin", "Fogo", 20, 5, 3, 10, 1, 2, 3, 4);
+
+        repository.create(monstro);
+
+        monstro.setNomeMonstro("Goblin Guerreiro");
+        monstro.setFraqueza("Água");
+        monstro.setHp(15);
+        monstro.setAgility(8);
+
+        repository.update(monstro);
+
+        Monstro atualizado = repository.loadFromId(monstro.getId());
+
+        verificar(atualizado.getNomeMonstro().equals("Goblin Guerreiro"), "Atualização do nome");
+
+        verificar(atualizado.getFraqueza().equals("Água"), "Atualização da fraqueza");
+
+        verificar(atualizado.getHp() == 15, "Atualização do HP");
+        verificar(atualizado.getAgility() == 8, "Atualização da agilidade");
+    }
+
+
+    public static void testarExclusaoComInstanciasDiferentes(MonstroRepository repository) {
+        Monstro monstro = new Monstro( "Orc", "Fogo", 30, 4, 8, 10, 1, 2, 3, 4);
+
+        repository.create(monstro);
+
+        int id = monstro.getId();
+
+        Monstro carregado = repository.loadFromId(id);
+
+        verificar(carregado != null, "Consulta para teste de exclusão");
+        verificar(carregado != monstro, "Instâncias diferentes do mesmo monstro");
+
+        repository.delete(monstro);
+
+        System.out.println("Consulta após exclusão: " + repository.loadFromId(id));
+
+        //verificar(repository.getLoadedMonstros().stream().noneMatch(m -> m.getId() == id), "Remoção do monstro do cache por ID");
+
+        verificar(repository.loadFromId(id) == null, "Exclusão do monstro do banco");
+    }
+    
+    public static void testarListagem(MonstroRepository repository) {
+        int quantidadeAnterior = repository.loadAll().size();
+
+        Monstro monstro1 = new Monstro( "Esqueleto", "Fogo", 15, 4, 3, 5, 1, 2, 3, 4);
+
+        Monstro monstro2 = new Monstro( "Dragão", "Água", 100, 12, 20, 30, 5, 6, 7, 8);
+
+        repository.create(monstro1);
+        repository.create(monstro2);
+
+        java.util.List<Monstro> monstros = repository.loadAll();
+
+        verificar(monstros != null, "Lista não nula");
+
+        verificar(monstros.size() == quantidadeAnterior + 2, "Quantidade de monstros cadastrados");
+
+        verificar(repository.getLoadedMonstros().size() == monstros.size(), "Atualização da lista interna");
+
+        verificar(repository.getLoadedMonstro() != null, "Definição do monstro atual");
+
+        verificar(repository.getLoadedMonstro().getId() == monstros.get(0).getId(), "Monstro atual corresponde ao primeiro da lista");
+    }
+
+    public static void testarConsultaIdInexistente(MonstroRepository repository) {
+        Monstro encontrado = repository.loadFromId(-1);
+
+        verificar(encontrado == null, "Consulta por ID inexistente");
+        verificar(repository.getLoadedMonstro() == null, "Monstro atual nulo após consulta inexistente");
+    }
+
+    public static void testarAtualizacaoDoMonstroAtual(MonstroRepository repository) {
+        Monstro monstro1 = new Monstro("Lobo", "Fogo", 20, 5, 3, 10, 1, 2, 3, 4);
+        Monstro monstro2 = new Monstro("Troll", "Água", 50, 3, 8, 15, 1, 2, 3, 4);
+
+        repository.create(monstro1);
+        repository.create(monstro2);
+
+        repository.loadFromId(monstro1.getId());
+
+        verificar(repository.getLoadedMonstro().getId() == monstro1.getId(), "Definição do primeiro monstro atual");
+
+        repository.loadFromId(monstro2.getId());
+
+        verificar(repository.getLoadedMonstro().getId() == monstro2.getId(), "Atualização do monstro atual após nova consulta");
+    }
+
+    public static void testarAtualizacaoNoCache(MonstroRepository repository) {
+        Monstro monstro = new Monstro("Aranha", "Fogo", 30, 6, 5, 10, 1, 2, 3, 4);
+
+        repository.create(monstro);
+
+        Monstro carregado = repository.loadFromId(monstro.getId());
+
+        monstro.setNomeMonstro("Aranha Gigante");
+        monstro.setHp(20);
+
+        repository.update(monstro);
+
+        verificar(repository.getLoadedMonstros().stream().anyMatch(m -> m.getId() == monstro.getId() && m.getNomeMonstro().equals("Aranha Gigante") && m.getHp() == 20), "Atualização do objeto no cache");
+    }
+
+    public static void testarAtualizacaoComInstanciasDiferentes(MonstroRepository repository) {
+        Monstro monstro = new Monstro("Morcego", "Fogo", 20, 5, 3, 10, 1, 2, 3, 4);
+
+        repository.create(monstro);
+
+        Monstro carregado = repository.loadFromId(monstro.getId());
+
+        verificar(carregado != monstro, "Instâncias diferentes para atualização");
+
+        monstro.setNomeMonstro("Morcego Gigante");
+        monstro.setHp(15);
+
+        repository.update(monstro);
+
+        //verificar( carregado.getNomeMonstro().equals("Morcego Gigante"), "Atualização da instância carregada no cache");
+
+        Monstro consultaBanco = repository.loadFromId(monstro.getId());
+
+        System.out.println("Nome após nova consulta: " + consultaBanco.getNomeMonstro());
+        System.out.println("HP após nova consulta: " + consultaBanco.getHp());
+
+        verificar(carregado.getHp() == 15, "Atualização do HP da instância carregada no cache");
+    }
+
+    public static void verificar(boolean resultado, String teste) {
+        if (!resultado) {
+            throw new AssertionError("Falha: " + teste);
+        }
+
+        System.out.println("Aprovado: " + teste);
+    }
+}
